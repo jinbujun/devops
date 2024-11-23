@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: canary-rollouts-traffic-demo
+  namespace: demo
+spec:
+  replicas: 3
+  strategy:
+    canary:
+      canaryService: rollouts-traffic-canary
+      stableService: rollouts-traffic-stable
+      trafficRouting:
+        nginx:
+          stableIngress: rollouts-traffic-stable
+      # 发布的节奏
+      steps:
+      - setWeight: 30
+      # 会一直暂停
+      - pause: {}
+      - setWeight: 60
+      - pause: {}
+      - setWeight: 100
+      - pause: {}
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: rollouts-traffic-demo
+  template:
+    metadata:
+      labels:
+        app: rollouts-traffic-demo
+    spec:
+      containers:
+      - name: rollouts-traffic-demo
+        image: registry.cn-hangzhou.aliyuncs.com/zhdya/kubernetes-bootcamp:v1
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 512m

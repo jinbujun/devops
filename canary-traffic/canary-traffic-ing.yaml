@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rollouts-traffic-stable
+  namespace: demo
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: canary.istio.top
+    http:
+      paths:
+      - backend:
+          service:
+            name: rollouts-traffic-stable
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
