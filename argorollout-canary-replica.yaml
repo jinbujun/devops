@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argorollout-canary-replica
+  namespace: argocd
+spec:
+  destination:
+    name: ''
+    namespace: demo
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: canary-replica
+    repoURL: 'http://gitlab.istio.top/demoteam/argocd-example-apps.git'
+    targetRevision: main
+  sources: []
+  project: default
